@@ -1,7 +1,11 @@
 export const BOT_READY_TIMEOUT = 15 * 1000; // 15 seconds
 
-export const defaultBotProfile = "voice_2024_10";
-export const defaultMaxDuration = 600;
+export const defaultBotProfile = {
+  name: "Assistant",
+  voice_id: "YOUR_ELEVEN_LABS_VOICE_ID", // Replace with your ElevenLabs voice ID
+};
+
+export const defaultMaxDuration = 3600; // 1 hour in seconds
 
 export const LANGUAGES = [
   {
@@ -57,9 +61,15 @@ export const LANGUAGES = [
 ];
 
 export const defaultServices = {
-  llm: "together",
-  tts: "cartesia",
-  stt: "deepgram",
+  elevenlabs: {
+    enabled: true,
+    settings: {
+      stability: 0.5,
+      similarity_boost: 0.75,
+      style: 0.0,
+      use_speaker_boost: true,
+    },
+  },
 };
 
 export const defaultLLMPrompt = `You are a assistant called ExampleBot. You can ask me anything.
@@ -68,44 +78,9 @@ Your responses will converted to audio. Please do not include any special charac
 Start by briefly introducing yourself.`;
 
 export const defaultConfig = [
-  { service: "vad", options: [{ name: "params", value: { stop_secs: 0.5 } }] },
   {
-    service: "tts",
-    options: [
-      { name: "voice", value: "79a125e8-cd45-4c13-8a67-188112f4dd22" },
-      { name: "model", value: LANGUAGES[0].tts_model },
-      { name: "language", value: LANGUAGES[0].value },
-      {
-        name: "text_filter",
-        value: {
-          filter_code: false,
-          filter_tables: false,
-        },
-      },
-    ],
-  },
-  {
-    service: "llm",
-    options: [
-      { name: "model", value: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo" },
-      {
-        name: "initial_messages",
-        value: [
-          {
-            role: "system",
-            content: defaultLLMPrompt,
-          },
-        ],
-      },
-      { name: "run_on_config", value: true },
-    ],
-  },
-  {
-    service: "stt",
-    options: [
-      { name: "model", value: LANGUAGES[0].stt_model },
-      { name: "language", value: LANGUAGES[0].value },
-    ],
+    type: "system",
+    content: "You are a helpful AI assistant.",
   },
 ];
 

@@ -8,8 +8,8 @@ import {
 export async function POST(request: Request) {
   const { services, config, rtvi_client_version } = await request.json();
 
-  if (!services || !config || !process.env.DAILY_BOTS_URL) {
-    return new Response(`Services or config not found on request body`, {
+  if (!services || !config || !process.env.DAILY_BOTS_URL || !process.env.ELEVEN_LABS_API_KEY) {
+    return new Response(`Services, config, or required API keys not found`, {
       status: 400,
     });
   }
@@ -17,11 +17,17 @@ export async function POST(request: Request) {
   const payload = {
     bot_profile: defaultBotProfile,
     max_duration: defaultMaxDuration,
-    services: { ...defaultServices, ...services },
+    services: { 
+      ...defaultServices, 
+      ...services,
+      elevenlabs: {
+        ...defaultServices.elevenlabs,
+        api_key: process.env.ELEVEN_LABS_API_KEY,
+      },
+    },
     api_keys: {
       openai: process.env.OPENAI_API_KEY,
-      grok: process.env.GROK_API_KEY,
-      gemini: process.env.GEMINI_API_KEY,
+      elevenlabs: process.env.ELEVEN_LABS_API_KEY,
     },
     config: [...config],
     rtvi_client_version,
